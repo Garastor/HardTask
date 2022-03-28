@@ -9,11 +9,14 @@ public class AccountService {
 
     private final AccountDao accountDao = new AccountDao();
 
-    public Account findAccount (long cardNumber, int cardPin) {
-        return accountDao.read(cardNumber, cardPin);
+    public Account findAccount (int id) {
+        return accountDao.read(id);
     }
 
-    public void saveAccount (Account account) {
+    public void saveAccount () {
+        CreditCardService creditCardService = new CreditCardService();
+        Account account = new Account();
+        account.setCreditCard(creditCardService.saveCard());
         accountDao.create(account);
         System.out.println(account);
     }
@@ -26,23 +29,15 @@ public class AccountService {
         accountDao.update(account);
     }
 
-    public Account createAccount () {
-        CreditCardService creditCardService = new CreditCardService();
-        Account account = new Account();
-        account.setCreditCard(creditCardService.createCard());
-        return account;
-    }
-
-    public boolean loginAccount (long cardNumber, int cardPin) {
-        boolean verify = false;
+    public int loginAccount (long cardNumber, int cardPin) {
+        int id = -1;
         ArrayList<Account> accounts = accountDao.readAll();
         for (Account ac:accounts){
             if (ac.getCreditCard().getNumber() == cardNumber && ac.getCreditCard().getPin() == cardPin) {
-                verify = true;
-                break;
+                id = ac.getId();
             }
         }
-        return verify;
+        return id;
     }
 
 }

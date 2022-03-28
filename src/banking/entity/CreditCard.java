@@ -2,14 +2,10 @@ package banking.entity;
 
 public class CreditCard {
 
-    private int id = 0;
+    private int id;
     private long number;
     private int pin;
     private long balance;
-
-    public CreditCard() {
-        this.id++;
-    }
 
     public long getBalance() {
         return balance;
@@ -24,7 +20,7 @@ public class CreditCard {
     }
 
     public void setId(int id) {
-        id = id;
+        this.id = id;
     }
 
     public long getNumber() {

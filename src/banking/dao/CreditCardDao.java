@@ -1,6 +1,6 @@
 package banking.dao;
 
-import banking.entity.Account;
+import banking.db.Connect;
 import banking.entity.CreditCard;
 
 import java.util.ArrayList;
@@ -8,20 +8,16 @@ import java.util.List;
 
 public class CreditCardDao {
 
-    private final List<CreditCard> creditCards = new ArrayList<>();
+    Connect connect = new Connect();
 
-    public void create(CreditCard creditCard) {
+    public int create(CreditCard creditCard) {
+        creditCard.setId(creditCards.size());
         creditCards.add(creditCard);
+        return creditCard.getId();
     }
 
     public CreditCard read(int id){
-        CreditCard creditCard = new CreditCard();
-        for (CreditCard card: creditCards) {
-            if (card.getId() == id){
-                creditCard = card;
-            }
-        }
-        return creditCard;
+        return creditCards.get(id);
     }
 
     public void update(CreditCard creditCard) {

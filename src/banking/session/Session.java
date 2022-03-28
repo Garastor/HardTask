@@ -2,7 +2,6 @@ package banking.session;
 
 import banking.entity.Account;
 import banking.service.AccountService;
-import banking.service.CreditCardService;
 import banking.service.Inputs;
 import banking.service.Messages;
 
@@ -45,11 +44,12 @@ public class Session {
                     break;
                 case "1":
                     printMessage(Messages.CREATE);
-                    accountService.saveAccount(accountService.createAccount());
+                    accountService.saveAccount();
                     printMessage(Messages.HELLO);
                     break;
                 case "2":
-                    if(!accountMenu(true)){
+                    if(!accountMenu()){
+                        printMessage(Messages.BYE);
                         mainMenu = false;
                     }
                     break;
@@ -57,14 +57,16 @@ public class Session {
         }
     }
 
-    boolean accountMenu (boolean mainMenu) {
+    boolean accountMenu () {
+        boolean mainMenu = true;
         boolean accountMenu = true;
         printMessage(Messages.ENTERCARD);
-        long cardNumber = Long.parseLong(takeInput(Inputs.CARDNUMBER));
+        long cardNumber = Long.parseLong(takeInput(Inputs.NUMBER));
         printMessage(Messages.ENTERPIN);
         int pin = Integer.parseInt(takeInput(Inputs.PIN));
-        if(accountService.loginAccount(cardNumber, pin)) {
-            Account account = accountService.findAccount(cardNumber, pin);
+        int id = accountService.loginAccount(cardNumber, pin);
+        if(id != -1) {
+            Account account = accountService.findAccount(id);
             printMessage(Messages.LOGIN);
             while (accountMenu){
                 printMessage(Messages.MENU);
@@ -72,6 +74,7 @@ public class Session {
                 switch (input2){
                     case "0":
                         mainMenu = false;
+                        accountMenu = false;
                         break;
                     case "1":
                         printMessage(Messages.BALANCE);
@@ -87,7 +90,7 @@ public class Session {
         } else {
             printMessage(Messages.ERRORLOGIN);
             printMessage(Messages.HELLO);
-            accountMenu = false;
+            mainMenu = true;
         }
         return mainMenu;
     }

@@ -1,8 +1,6 @@
 package banking.service;
 
-import banking.dao.AccountDao;
 import banking.dao.CreditCardDao;
-import banking.entity.Account;
 import banking.entity.CreditCard;
 
 import java.util.Random;
@@ -15,9 +13,14 @@ public class CreditCardService {
         return creditCardDao.read(id);
     }
 
-    public void saveCard(CreditCard creditCard) {
-
-        creditCardDao.create(creditCard);
+    public CreditCard saveCard() {
+        CreditCard creditCard = new CreditCard();
+        creditCard.setNumber(addCheckSum(randomizer("400000", 9)));
+        creditCard.setPin(Integer.parseInt(randomizer("", 4)));
+        creditCard.setBalance(0);
+        int id = creditCardDao.create(creditCard);
+        creditCard.setId(id);
+        return creditCard;
     }
 
     public void deleteCard(CreditCard creditCard) {
@@ -28,20 +31,26 @@ public class CreditCardService {
         creditCardDao.update(creditCard);
     }
 
-    public CreditCard createCard() {
-        CreditCard creditCard = new CreditCard();
-        creditCard.setNumber(Long.parseLong(randomizer(new StringBuilder("400000"), 10)));
-        creditCard.setPin(Integer.parseInt(randomizer(new StringBuilder(""), 4)));
-        creditCard.setBalance(0);
-        return creditCard;
-    }
-
-    String randomizer(StringBuilder stringBuilder, int cells) {
+    String randomizer(String firstSymbols, int createCells) {
         Random random = new Random();
-        for (int n = 0; n < cells; n++) {
+        StringBuilder stringBuilder = new StringBuilder(firstSymbols);
+        for (int n = 0; n < createCells; n++) {
             stringBuilder.append(random.nextInt(9) + 1);
         }
         return stringBuilder.toString();
+    }
+
+    long addCheckSum(String randomNumber) {
+        int sum = 0;
+        for (int i=randomNumber.length()-1; i>=0; i--){
+            int a = Integer.parseInt(String.valueOf(randomNumber.charAt(i)));
+            if(i % 2 == 0) {
+                a *= 2;
+                if (a > 9) a -= 9;
+            }
+            sum += a;
+        }
+        return Long.parseLong(randomNumber.concat(String.valueOf((sum*9)%10)));
     }
 
 }

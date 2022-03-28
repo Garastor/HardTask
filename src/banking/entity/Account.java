@@ -2,19 +2,15 @@ package banking.entity;
 
 public class Account {
 
-    private int id = 0;
+    private int id;
     private CreditCard creditCard;
-
-    public Account () {
-        this.id++;
-    }
 
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
-        id = id;
+        this.id = id;
     }
 
     public CreditCard getCreditCard() {
