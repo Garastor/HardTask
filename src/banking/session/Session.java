@@ -1,100 +1,105 @@
 package banking.session;
 
-import banking.entity.Account;
-import banking.service.AccountService;
-import banking.service.Inputs;
-import banking.service.Messages;
+import banking.dao.CreditCardDao;
+import banking.entity.CreditCard;
+import banking.service.CreditCardService;
+import banking.res.Inputs;
+import banking.res.Messages;
 
+import java.sql.Connection;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Session {
 
-    private final AccountService accountService = new AccountService();
-    Scanner scanner = new Scanner(System.in);
+    private Scanner scanner = new Scanner(System.in);
+    CreditCardService creditCardService;
+    CreditCardDao creditCardDao;
 
-    public void sessionStart() {
-        mainMenu();
+    public Session(Connection conn) {
+        this.creditCardDao = new CreditCardDao(conn);
+        this.creditCardService = new CreditCardService();
     }
+
 
     void printMessage(Messages messages) {
         System.out.println(messages.getMessage());
     }
 
-    String takeInput (Inputs inputs){
+    String takeInput(Inputs inputs) {
+        while (true) {
+            while (!scanner.hasNext()) {
+                scanner.nextLine();
+                scanner.next();
+            }
+            String s = scanner.next();
+            if (inputs.check(s)) {
+                return s;
+            }
+        }
+    }
+
+    public void sessionStart () {
         String input;
-        while (true){
-            String s = scanner.nextLine();
-            if(inputs.check(s)) {
-                input = s;
-                break;
+        creditCardDao.createTable();
+        do{
+            printMessage(Messages.HELLO);
+            input = takeInput(Inputs.MENU);
+            switch (input) {
+                case "1":
+                    printMessage(Messages.CREATE);
+                    CreditCard cd = creditCardService.createCard();
+                    creditCardDao.create(cd);
+                    break;
+                case "2":
+                    printMessage(Messages.ENTERCARD);
+                    input = scanner.next();
+                    String cardNumber = input;
+                    printMessage(Messages.ENTERPIN);
+                    input = scanner.next();
+                    String pin = input;
+                    if (isFindCard(cardNumber, pin)){
+                        printMessage(Messages.LOGIN);
+                        CreditCard card = creditCardDao.read(cardNumber, pin);
+                        input = accountMenu(card);
+                    } else {
+                        printMessage(Messages.ERRORLOGIN);
+                    }
+                    break;
+            }
+        } while (!Objects.equals(input, "0"));
+    }
+
+    String accountMenu (CreditCard card) {
+        String input = "4";
+        boolean accountMenu = true;
+        while (accountMenu){
+            printMessage(Messages.MENU);
+            input = takeInput(Inputs.MENU);
+            switch (input) {
+                case "1":
+                    printMessage(Messages.BALANCE);
+                    System.out.println(card.getBalance());
+                    break;
+                case "2":
+                    printMessage(Messages.LOGOUT);
+                    accountMenu = false;
+                    break;
+                case "0":
+                    accountMenu=false;
+                    break;
             }
         }
         return input;
     }
 
-    void mainMenu () {
-        printMessage(Messages.HELLO);
-        boolean mainMenu = true;
-        while (mainMenu) {
-            String input = takeInput(Inputs.MENU);
-            switch (input) {
-                case "0":
-                    printMessage(Messages.BYE);
-                    mainMenu = false;
-                    break;
-                case "1":
-                    printMessage(Messages.CREATE);
-                    accountService.saveAccount();
-                    printMessage(Messages.HELLO);
-                    break;
-                case "2":
-                    if(!accountMenu()){
-                        printMessage(Messages.BYE);
-                        mainMenu = false;
-                    }
-                    break;
+    boolean isFindCard(String cardNumber, String pin) {
+        boolean find = false;
+        for (CreditCard creditCard : creditCardDao.readAll()) {
+            find = (Objects.equals(creditCard.getNumber(), cardNumber) && Objects.equals(creditCard.getPin(), pin));
             }
-        }
+        return find;
     }
-
-    boolean accountMenu () {
-        boolean mainMenu = true;
-        boolean accountMenu = true;
-        printMessage(Messages.ENTERCARD);
-        long cardNumber = Long.parseLong(takeInput(Inputs.NUMBER));
-        printMessage(Messages.ENTERPIN);
-        int pin = Integer.parseInt(takeInput(Inputs.PIN));
-        int id = accountService.loginAccount(cardNumber, pin);
-        if(id != -1) {
-            Account account = accountService.findAccount(id);
-            printMessage(Messages.LOGIN);
-            while (accountMenu){
-                printMessage(Messages.MENU);
-                String input2 = takeInput(Inputs.MENU);
-                switch (input2){
-                    case "0":
-                        mainMenu = false;
-                        accountMenu = false;
-                        break;
-                    case "1":
-                        printMessage(Messages.BALANCE);
-                        System.out.println(account.getCreditCard().getBalance());
-                        break;
-                    case "2":
-                        printMessage(Messages.LOGOUT);
-                        printMessage(Messages.HELLO);
-                        accountMenu = false;
-                        break;
-                }
-            }
-        } else {
-            printMessage(Messages.ERRORLOGIN);
-            printMessage(Messages.HELLO);
-            mainMenu = true;
-        }
-        return mainMenu;
-    }
-
 
 
 }

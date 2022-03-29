@@ -1,35 +1,22 @@
 package banking;
 
-import banking.db.Connect;
-import banking.entity.Account;
+import banking.db.ConnectToDb;
 import banking.session.Session;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
+import java.sql.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
-        Session session = new Session();
+        ConnectToDb connect = new ConnectToDb();
+        Connection conn = connect.doConnect("jdbc:sqlite:"+args[1]);
+
+        Session session = new Session(conn);
         session.sessionStart();
 
-        String filename = null;
+        conn.close();
+        System.out.println("\nBye!");
 
-//        for (int i = 0; i < args.length; i = i + 2) {
-//            if (args[i].equals("-fileName")) {
-//                filename = args[i + 1];
-//            }
-//        }
-//
-//        if (filename != null) {
-//            //        Session session = new Session();
-////        session.sessionStart();
-//        } else {
-//            System.out.println("The argument fileName is required to start the application.");
-//        }
-//    }
-
+    }
 }
+

@@ -3,15 +3,15 @@ package banking.entity;
 public class CreditCard {
 
     private int id;
-    private long number;
-    private int pin;
-    private long balance;
+    private String number;
+    private String pin;
+    private int balance=5;
 
-    public long getBalance() {
+    public int getBalance() {
         return balance;
     }
 
-    public void setBalance(long balance) {
+    public void setBalance(int balance) {
         this.balance = balance;
     }
 
@@ -23,28 +23,27 @@ public class CreditCard {
         this.id = id;
     }
 
-    public long getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(long number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
-    public int getPin() {
+    public String getPin() {
         return pin;
     }
 
-    public void setPin(int pin) {
+    public void setPin(String pin) {
         this.pin = pin;
     }
 
     @Override
     public String toString() {
-        return "CreditCard{" +
-                "id=" + id +
-                ", number=" + number +
-                ", pin=" + pin +
-                '}';
+        return "Your card number:\n" +
+        getNumber() +
+        "\nYour card PIN:\n" +
+        getPin() +"\n";
     }
 }

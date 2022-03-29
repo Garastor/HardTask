@@ -1,34 +1,18 @@
 package banking.service;
 
-import banking.dao.CreditCardDao;
 import banking.entity.CreditCard;
 
 import java.util.Random;
 
 public class CreditCardService {
 
-    private final CreditCardDao creditCardDao = new CreditCardDao();
-
-    public CreditCard findCard(int id) {
-        return creditCardDao.read(id);
-    }
-
-    public CreditCard saveCard() {
-        CreditCard creditCard = new CreditCard();
-        creditCard.setNumber(addCheckSum(randomizer("400000", 9)));
-        creditCard.setPin(Integer.parseInt(randomizer("", 4)));
-        creditCard.setBalance(0);
-        int id = creditCardDao.create(creditCard);
-        creditCard.setId(id);
-        return creditCard;
-    }
-
-    public void deleteCard(CreditCard creditCard) {
-        creditCardDao.delete(creditCard);
-    }
-
-    public void updateCard(CreditCard creditCard) {
-        creditCardDao.update(creditCard);
+    public CreditCard createCard() {
+        CreditCard card = new CreditCard();
+        card.setNumber(addCheckSum(randomizer("400000", 9)));
+        card.setPin(randomizer("", 4));
+        card.setBalance(0);
+        System.out.println(card);
+        return card;
     }
 
     String randomizer(String firstSymbols, int createCells) {
@@ -40,7 +24,7 @@ public class CreditCardService {
         return stringBuilder.toString();
     }
 
-    long addCheckSum(String randomNumber) {
+    String addCheckSum(String randomNumber) {
         int sum = 0;
         for (int i=randomNumber.length()-1; i>=0; i--){
             int a = Integer.parseInt(String.valueOf(randomNumber.charAt(i)));
@@ -50,7 +34,7 @@ public class CreditCardService {
             }
             sum += a;
         }
-        return Long.parseLong(randomNumber.concat(String.valueOf((sum*9)%10)));
+        return randomNumber.concat(String.valueOf((sum*9)%10));
     }
 
 }

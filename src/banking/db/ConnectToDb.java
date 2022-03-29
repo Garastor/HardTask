@@ -1,33 +1,29 @@
 package banking.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
-public class Connect {
+public class ConnectToDb {
 
-    public static void connect() {
+    public Connection doConnect(String url) {
         Connection conn = null;
         try {
-            // db parameters
-            String url = "jdbc:sqlite:/Users/tchornyi/Documents/MyJavaProjects/Battleship/Simple Banking System/Simple Banking System/task/src/banking/db/bank.db";
-            // create a connection to the database
+            String newUrl = "jdbc:sqlite:/Users/tchornyi/Documents/MyJavaProjects/Battleship/Simple Banking System/Simple Banking System/task/src/banking/card.s3db";
             conn = DriverManager.getConnection(url);
-
-            System.out.println("Connection to SQLite has been established.");
-
-
         } catch (SQLException e) {
             System.out.println("SQL Error:\n" + e.getMessage());
-        } finally {
+        }
+        return conn;
+    }
+
+        public void closeConnect (Connection conn){
             try {
                 if (conn != null) {
                     conn.close();
+                    System.out.println("Connection is closed\n");
                 }
             } catch (SQLException ex) {
                 System.out.println("SQL Error:\n" + ex.getMessage());
             }
         }
-    }
 
 }
