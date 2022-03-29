@@ -18,11 +18,11 @@ public class CreditCardDao {
     public void create(CreditCard card) {
         if(conn != null) {
             try {
-                String sql = "INSERT INTO card (number, pin, balance) VALUES(?,?,?)";
+                String sql = "INSERT INTO card (id, number, pin) VALUES(?,?,?)";
                 pst = conn.prepareStatement(sql);
-                pst.setString(1, card.getNumber());
-                pst.setString(2, card.getPin());
-                pst.setInt(3,0);
+                pst.setInt(1, card.getId());
+                pst.setString(2, card.getNumber());
+                pst.setString(3, card.getPin());
                 pst.executeUpdate();
             } catch (SQLException ex) {
                 System.out.println("ERROR: Creating card is failed");
@@ -75,12 +75,12 @@ public class CreditCardDao {
         return cardList;
     }
 
-    public void update(String cardNumber, String amount) {
+    public void update(String cardNumber, String income, String operation) {
         if(conn != null) {
             try {
-                String sql = "UPDATE card SET balance=balance+? WHERE number=?";
+                String sql = "UPDATE card SET balance=balance"+operation+"? WHERE number=?";
                 pst = conn.prepareStatement(sql);
-                pst.setString(1, amount);
+                pst.setString(1, income);
                 pst.setString(2, cardNumber);
                 pst.executeUpdate();
             } catch (SQLException ex) {
@@ -92,7 +92,7 @@ public class CreditCardDao {
     public void delete(CreditCard card) {
         if(conn != null) {
             try {
-                String sql = "DELETE * FROM card WHERE number=?";
+                String sql = "DELETE FROM card WHERE number=?";
                 pst = conn.prepareStatement(sql);
                 pst.setString(1, card.getNumber());
                 pst.executeUpdate();
@@ -102,16 +102,18 @@ public class CreditCardDao {
         }
     }
 
+//IF NOT EXISTS
     public void createTable () {
         if (conn != null) {
             try {
-                String tableSql = "CREATE TABLE IF NOT EXISTS card( " +
-                        "id INTEGER PRIMARY KEY, " +
+                String tableSql = "CREATE TABLE card( " +
+                        "id INTEGER, " +
                         "number TEXT, " +
                         "pin TEXT, " +
                         "balance INTEGER DEFAULT 0)";
                 st = conn.createStatement();
                 st.executeUpdate(tableSql);
+                System.out.println("Table is created");
             } catch (SQLException ex) {
                 System.out.println("ERROR: Creating table \"card\" is failed");
             }
@@ -124,6 +126,7 @@ public class CreditCardDao {
                 String sql = "DROP TABLE IF EXISTS card";
                 st = conn.createStatement();
                 st.executeUpdate(sql);
+                System.out.println("Table is deleted");
             } catch (SQLException ex) {
                 System.out.println("ERROR: Can't delete table");
                 System.out.println(ex.getMessage());

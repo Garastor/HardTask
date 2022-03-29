@@ -10,11 +10,24 @@ public enum Messages {
     LOGIN("\nYou have successfully logged in!\n"),
     CREATE("\nYour card has been created"),
     MENU ("1. Balance\n" +
-            "2. Log out\n" +
-            "0. Exit"),
+            "2. Add income\n" +
+            "3. Do transfer\n" +
+            "4. Close account\n" +
+            "5. Log out\n" +
+            "0. Exit)\n"),
     BALANCE ("Balance: "),
     LOGOUT ("\nYou have successfully logged out!\n"),
-    BYE ("Bye!\n");
+    BYE ("Bye!\n"),
+    ENTERINCOME ("\nEnter income:"),
+    INCOMEADDED ("Income was added!\n"),
+    DOTRANSFER ("Transfer\n Enter card number:"),
+    TRANSMISTAKE ("Probably you made a mistake in the card number. Please try again!\n"),
+    TRANSNOCARD ("Such a card does not exist."),
+    TRANSHOWMUCH ("Enter how much money you want to transfer:"),
+    TRANSNOENOUGH ("Not enough money!\n"),
+    TRANSSUCCESS ("Success!\n"),
+    CLOSEACC ("The account has been closed!\n");
+
 
     String message;
 

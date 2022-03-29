@@ -5,7 +5,7 @@ public class CreditCard {
     private int id;
     private String number;
     private String pin;
-    private int balance=5;
+    private int balance;
 
     public int getBalance() {
         return balance;

@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 public enum Inputs {
 
     MENU ("[0-2]"),
+    MENU2 ("[0-5]"),
     NUMBER("[0] | [0-9]{16}"),
     PIN ("[0] | [0-9]{4}");
 

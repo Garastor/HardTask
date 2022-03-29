@@ -48,8 +48,7 @@ public class Session {
             switch (input) {
                 case "1":
                     printMessage(Messages.CREATE);
-                    CreditCard cd = creditCardService.createCard();
-                    creditCardDao.create(cd);
+                    creditCardDao.create(creditCardService.createCard());
                     break;
                 case "2":
                     printMessage(Messages.ENTERCARD);
@@ -58,7 +57,7 @@ public class Session {
                     printMessage(Messages.ENTERPIN);
                     input = scanner.next();
                     String pin = input;
-                    if (isFindCard(cardNumber, pin)){
+                    if (isLogIn(cardNumber, pin)){
                         printMessage(Messages.LOGIN);
                         CreditCard card = creditCardDao.read(cardNumber, pin);
                         input = accountMenu(card);
@@ -68,6 +67,7 @@ public class Session {
                     break;
             }
         } while (!Objects.equals(input, "0"));
+        //creditCardDao.deleteTable();
     }
 
     String accountMenu (CreditCard card) {
@@ -75,13 +75,48 @@ public class Session {
         boolean accountMenu = true;
         while (accountMenu){
             printMessage(Messages.MENU);
-            input = takeInput(Inputs.MENU);
+            input = takeInput(Inputs.MENU2);
             switch (input) {
                 case "1":
                     printMessage(Messages.BALANCE);
                     System.out.println(card.getBalance());
                     break;
                 case "2":
+                    //add income
+                    printMessage(Messages.ENTERINCOME);
+                    creditCardDao.update(card.getNumber(), scanner.next(), "+");
+                    printMessage(Messages.INCOMEADDED);
+                    card = creditCardDao.read(card.getNumber(), card.getPin());
+                    break;
+                case "3":
+                    //do transfer
+                    printMessage(Messages.DOTRANSFER);
+                    input = scanner.next();
+                    if (!creditCardService.compareCheckSum(input)){
+                        printMessage(Messages.TRANSMISTAKE);
+                        break;
+                    }
+                    if (!isFindCard(input)){
+                        printMessage(Messages.TRANSNOCARD);
+                        break;
+                    }
+                    String cardNumber = input;
+                    printMessage(Messages.TRANSHOWMUCH);
+                    input = scanner.next();
+                    if(card.getBalance()<Integer.parseInt(input)){
+                        printMessage(Messages.TRANSNOENOUGH);
+                        break;
+                    }
+                    creditCardDao.update(cardNumber, input, "+");
+                    creditCardDao.update(card.getNumber(), (input), "-");
+                    card = creditCardDao.read(card.getNumber(), card.getPin());
+                    break;
+                case "4":
+                    creditCardDao.delete(card);
+                    printMessage(Messages.CLOSEACC);
+                    accountMenu = false;
+                    break;
+                case "5":
                     printMessage(Messages.LOGOUT);
                     accountMenu = false;
                     break;
@@ -93,11 +128,24 @@ public class Session {
         return input;
     }
 
-    boolean isFindCard(String cardNumber, String pin) {
+    boolean isLogIn(String cardNumber, String pin) {
+        boolean login = false;
+        for (CreditCard creditCard : creditCardDao.readAll()) {
+            if ((Objects.equals(creditCard.getNumber(), cardNumber) && Objects.equals(creditCard.getPin(), pin))) {
+                login = true;
+                break;
+            }
+            }
+        return login;
+    }
+
+    boolean isFindCard(String cardNumber) {
         boolean find = false;
         for (CreditCard creditCard : creditCardDao.readAll()) {
-            find = (Objects.equals(creditCard.getNumber(), cardNumber) && Objects.equals(creditCard.getPin(), pin));
+            if(Objects.equals(creditCard.getNumber(), cardNumber)) {
+                find = true;
             }
+        }
         return find;
     }
 
