@@ -42,8 +42,8 @@ public class CreditCard {
     @Override
     public String toString() {
         return "Your card number:\n" +
-        getNumber() +
-        "\nYour card PIN:\n" +
-        getPin() +"\n";
+                getNumber() +
+                "\nYour card PIN:\n" +
+                getPin() + "\n";
     }
 }

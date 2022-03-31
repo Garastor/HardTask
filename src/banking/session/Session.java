@@ -2,49 +2,47 @@ package banking.session;
 
 import banking.dao.CreditCardDao;
 import banking.entity.CreditCard;
+import banking.entity.RegEx;
+import banking.entity.Messages;
 import banking.service.CreditCardService;
-import banking.res.Inputs;
-import banking.res.Messages;
 
-import java.sql.Connection;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Session {
 
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
     CreditCardService creditCardService;
     CreditCardDao creditCardDao;
 
-    public Session(Connection conn) {
-        this.creditCardDao = new CreditCardDao(conn);
+    public Session() {
+        this.creditCardDao = new CreditCardDao();
         this.creditCardService = new CreditCardService();
     }
-
 
     void printMessage(Messages messages) {
         System.out.println(messages.getMessage());
     }
 
-    String takeInput(Inputs inputs) {
+    String takeInput(RegEx regEx) {
         while (true) {
             while (!scanner.hasNext()) {
                 scanner.nextLine();
                 scanner.next();
             }
             String s = scanner.next();
-            if (inputs.check(s)) {
+            if (regEx.check(s)) {
                 return s;
             }
         }
     }
 
-    public void sessionStart () {
+    public void sessionStart() {
         String input;
-        creditCardDao.createTable();
-        do{
+        //creditCardDao.createTable();
+        do {
             printMessage(Messages.HELLO);
-            input = takeInput(Inputs.MENU);
+            input = takeInput(RegEx.MENU);
             switch (input) {
                 case "1":
                     printMessage(Messages.CREATE);
@@ -57,7 +55,7 @@ public class Session {
                     printMessage(Messages.ENTERPIN);
                     input = scanner.next();
                     String pin = input;
-                    if (isLogIn(cardNumber, pin)){
+                    if (isLogIn(cardNumber, pin)) {
                         printMessage(Messages.LOGIN);
                         CreditCard card = creditCardDao.read(cardNumber, pin);
                         input = accountMenu(card);
@@ -67,15 +65,16 @@ public class Session {
                     break;
             }
         } while (!Objects.equals(input, "0"));
+        printMessage(Messages.BYE);
         //creditCardDao.deleteTable();
     }
 
-    String accountMenu (CreditCard card) {
+    private String accountMenu(CreditCard card) {
         String input = "4";
         boolean accountMenu = true;
-        while (accountMenu){
+        while (accountMenu) {
             printMessage(Messages.MENU);
-            input = takeInput(Inputs.MENU2);
+            input = takeInput(RegEx.MENU2);
             switch (input) {
                 case "1":
                     printMessage(Messages.BALANCE);
@@ -92,18 +91,18 @@ public class Session {
                     //do transfer
                     printMessage(Messages.DOTRANSFER);
                     input = scanner.next();
-                    if (!creditCardService.compareCheckSum(input)){
+                    if (!creditCardService.compareCheckSum(input)) {
                         printMessage(Messages.TRANSMISTAKE);
                         break;
                     }
-                    if (!isFindCard(input)){
+                    if (!isFindCard(input)) {
                         printMessage(Messages.TRANSNOCARD);
                         break;
                     }
                     String cardNumber = input;
                     printMessage(Messages.TRANSHOWMUCH);
                     input = scanner.next();
-                    if(card.getBalance()<Integer.parseInt(input)){
+                    if (card.getBalance() < Integer.parseInt(input)) {
                         printMessage(Messages.TRANSNOENOUGH);
                         break;
                     }
@@ -121,7 +120,7 @@ public class Session {
                     accountMenu = false;
                     break;
                 case "0":
-                    accountMenu=false;
+                    accountMenu = false;
                     break;
             }
         }
@@ -135,19 +134,18 @@ public class Session {
                 login = true;
                 break;
             }
-            }
+        }
         return login;
     }
 
     boolean isFindCard(String cardNumber) {
         boolean find = false;
         for (CreditCard creditCard : creditCardDao.readAll()) {
-            if(Objects.equals(creditCard.getNumber(), cardNumber)) {
+            if (Objects.equals(creditCard.getNumber(), cardNumber)) {
                 find = true;
             }
         }
         return find;
     }
-
 
 }
