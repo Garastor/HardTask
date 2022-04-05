@@ -1,6 +1,6 @@
 package banking.entity;
 
-public enum Messages {
+public enum PrintMessage {
     HELLO("1. Create an account\n" +
             "2. Log into account\n" +
             "0. Exit"),
@@ -31,12 +31,12 @@ public enum Messages {
 
     String message;
 
-    Messages(String message) {
+    PrintMessage(String message) {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
+    public void print() {
+        System.out.println(message);
     }
 
 }

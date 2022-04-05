@@ -1,15 +1,14 @@
 package banking;
 
-import banking.db.ConnectToDb;
-import banking.session.Session;
+import banking.menu.MainMenu;
 
 import java.sql.*;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
 
-        Session session = new Session();
-        session.sessionStart();
+        MainMenu mainMenu = new MainMenu();
+        mainMenu.startMenu();
 
     }
 }

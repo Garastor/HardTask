@@ -141,7 +141,6 @@ public class CreditCardDao {
         }
     }
 
-    //IF NOT EXISTS
     public void createTable() {
         try {
             conn = connect.doConnect();
