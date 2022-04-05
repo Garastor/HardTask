@@ -1,47 +1,52 @@
 package banking.service;
 
-import banking.dao.AccountDao;
-import banking.dao.CreditCardDao;
-import banking.entity.Account;
 import banking.entity.CreditCard;
 
+import java.util.Optional;
 import java.util.Random;
 
 public class CreditCardService {
 
-    private final CreditCardDao creditCardDao = new CreditCardDao();
-
-    public CreditCard findCard(int id) {
-        return creditCardDao.read(id);
-    }
-
-    public void saveCard(CreditCard creditCard) {
-
-        creditCardDao.create(creditCard);
-    }
-
-    public void deleteCard(CreditCard creditCard) {
-        creditCardDao.delete(creditCard);
-    }
-
-    public void updateCard(CreditCard creditCard) {
-        creditCardDao.update(creditCard);
-    }
-
     public CreditCard createCard() {
-        CreditCard creditCard = new CreditCard();
-        creditCard.setNumber(Long.parseLong(randomizer(new StringBuilder("400000"), 10)));
-        creditCard.setPin(Integer.parseInt(randomizer(new StringBuilder(""), 4)));
-        creditCard.setBalance(0);
-        return creditCard;
+        CreditCard card = new CreditCard();
+        card.setId(Integer.parseInt(randomizer("", 2)));
+        String number = randomizer("400000", 9);
+        card.setNumber(number.concat(takeCheckSum(number)));
+        card.setPin(randomizer("", 4));
+        card.setBalance(0);
+        System.out.println(card);
+        return card;
     }
 
-    String randomizer(StringBuilder stringBuilder, int cells) {
+    public boolean compareCheckSum(String number) {
+        String checkSum = String.valueOf(number.charAt(number.length() - 1));
+        String checkNumb = Optional.ofNullable(number)
+                .filter(str -> str.length() != 0)
+                .map(str -> str.substring(0, str.length() - 1))
+                .orElse(number);
+        return (checkSum.equals(takeCheckSum(checkNumb)));
+    }
+
+    private String randomizer(String firstSymbols, int createCells) {
         Random random = new Random();
-        for (int n = 0; n < cells; n++) {
+        StringBuilder stringBuilder = new StringBuilder(firstSymbols);
+        for (int n = 0; n < createCells; n++) {
             stringBuilder.append(random.nextInt(9) + 1);
         }
         return stringBuilder.toString();
+    }
+
+    private String takeCheckSum(String randomNumber) {
+        int sum = 0;
+        for (int i = randomNumber.length() - 1; i >= 0; i--) {
+            int a = Integer.parseInt(String.valueOf(randomNumber.charAt(i)));
+            if (i % 2 == 0) {
+                a *= 2;
+                if (a > 9) a -= 9;
+            }
+            sum += a;
+        }
+        return String.valueOf((sum * 9) % 10);
     }
 
 }
