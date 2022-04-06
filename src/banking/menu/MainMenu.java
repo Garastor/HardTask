@@ -12,7 +12,7 @@ public class MainMenu {
 
     private CreditCardService creditCardService;
     private CreditCardDao creditCardDao;
-    UserMenu userMenu;
+    private UserMenu userMenu;
     boolean userLoggedIn;
 
     public MainMenu() {

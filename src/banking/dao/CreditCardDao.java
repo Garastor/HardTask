@@ -32,8 +32,6 @@ public class CreditCardDao {
         } finally {
             try {
                 pst.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
                 conn.close();
             } catch (Exception e) { /* Ignored */ }
         }
@@ -58,12 +56,10 @@ public class CreditCardDao {
             card = null;
         } finally {
             try {
-                pst.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
                 rs.close();
             } catch (Exception e) { /* Ignored */ }
             try {
+                pst.close();
                 conn.close();
             } catch (Exception e) { /* Ignored */ }
         }
@@ -90,12 +86,10 @@ public class CreditCardDao {
             System.out.println(ex.getMessage());
         } finally {
             try {
-                pst.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
                 rs.close();
             } catch (Exception e) { /* Ignored */ }
             try {
+                pst.close();
                 conn.close();
             } catch (Exception e) { /* Ignored */ }
         }
@@ -115,8 +109,6 @@ public class CreditCardDao {
         } finally {
             try {
                 pst.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
                 conn.close();
             } catch (Exception e) { /* Ignored */ }
         }
@@ -134,8 +126,6 @@ public class CreditCardDao {
         } finally {
             try {
                 pst.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
                 conn.close();
             } catch (Exception e) { /* Ignored */ }
         }
@@ -157,8 +147,6 @@ public class CreditCardDao {
         } finally {
             try {
                 st.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
                 conn.close();
             } catch (Exception e) { /* Ignored */ }
         }
@@ -177,8 +165,6 @@ public class CreditCardDao {
         } finally {
             try {
                 pst.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
                 conn.close();
             } catch (Exception e) { /* Ignored */ }
         }
