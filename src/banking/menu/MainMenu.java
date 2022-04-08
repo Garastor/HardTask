@@ -2,16 +2,18 @@ package banking.menu;
 
 import banking.dao.CreditCardDao;
 import banking.entity.CreditCard;
-import banking.entity.Inputs;
+import banking.entity.InputFromKeyboard;
 import banking.entity.PrintMessage;
 import banking.service.CreditCardService;
 
 import java.util.Objects;
 
+import static banking.entity.Constants.*;
+
 public class MainMenu {
 
-    private CreditCardService creditCardService;
-    private CreditCardDao creditCardDao;
+    private final CreditCardService creditCardService;
+    private final CreditCardDao creditCardDao;
     private UserMenu userMenu;
     boolean userLoggedIn;
 
@@ -21,20 +23,20 @@ public class MainMenu {
     }
 
     public void startMenu() {
-        String input = "2";
+        String input = TWO;
         do {
             if (userLoggedIn) {
                 userLoggedIn = userMenu.startMenu();
             } else {
-                PrintMessage.HELLO.print();
-                input = Inputs.MENU.get();
-                if (Objects.equals(input, "1")) {
+                PrintMessage.MAIN_MENU.print();
+                input = InputFromKeyboard.MAIN_MENU.get();
+                if (Objects.equals(input, ONE)) {
                     createNewCard();
-                } else if (Objects.equals(input, "2")) {
+                } else if (Objects.equals(input, TWO)) {
                     logIn();
                 }
             }
-        } while (!Objects.equals(input, "0"));
+        } while (!Objects.equals(input, ZERO));
         PrintMessage.BYE.print();
     }
 
@@ -43,16 +45,16 @@ public class MainMenu {
     }
 
     private void logIn() {
-        PrintMessage.ENTERCARD.print();
-        String cardNumber = Inputs.NUMBER.get();
-        PrintMessage.ENTERPIN.print();
-        String pin = Inputs.PIN.get();
+        PrintMessage.ENTER_CARD.print();
+        String cardNumber = InputFromKeyboard.CARD_NUMBER.get();
+        PrintMessage.ENTER_PIN.print();
+        String pin = InputFromKeyboard.CARD_PIN.get();
         if (isLogIn(cardNumber, pin)) {
             PrintMessage.LOGIN.print();
             userMenu = new UserMenu(cardNumber, pin);
             userLoggedIn = true;
         } else {
-            PrintMessage.ERRORLOGIN.print();
+            PrintMessage.ERROR_LOGIN.print();
         }
     }
 

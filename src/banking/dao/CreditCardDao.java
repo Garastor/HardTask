@@ -7,72 +7,38 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static banking.entity.Constants.*;
+
 public class CreditCardDao {
 
     private final ConnectToDb connect = new ConnectToDb();
-    private Connection conn;
-    private PreparedStatement pst;
-    private Statement st;
-    private ResultSet rs;
-
-    public CreditCardDao() {
-    }
 
     public void create(CreditCard card) {
-        try {
-            conn = connect.doConnect();
-            String sql = "INSERT INTO card (id, number, pin) VALUES(?,?,?)";
-            pst = conn.prepareStatement(sql);
-            pst.setInt(1, card.getId());
-            pst.setString(2, card.getNumber());
-            pst.setString(3, card.getPin());
+        try (Connection conn = connect.doConnect(); PreparedStatement pst = createPstCardCreate(card, conn)) {
             pst.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("ERROR: Creating card is failed");
-        } finally {
-            try {
-                pst.close();
-                conn.close();
-            } catch (Exception e) { /* Ignored */ }
         }
     }
 
     public CreditCard read(String cardNumber, String pin) {
         CreditCard card = new CreditCard();
-        try {
-            conn = connect.doConnect();
-            String sql = "SELECT * FROM card WHERE number=? AND pin=?";
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, String.valueOf(cardNumber));
-            pst.setString(2, String.valueOf(pin));
-            rs = pst.executeQuery();
-            rs.next();
+        try (Connection conn = connect.doConnect(); PreparedStatement pst = createPstCardRead(cardNumber, pin, conn);
+             ResultSet rs = pst.executeQuery()) {
             card.setId(rs.getInt(1));
             card.setNumber(rs.getString(2));
             card.setPin(rs.getString(3));
             card.setBalance(rs.getInt(4));
         } catch (SQLException ex) {
             System.out.println("ERROR: Reading card is failed");
-            card = null;
-        } finally {
-            try {
-                rs.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
-                pst.close();
-                conn.close();
-            } catch (Exception e) { /* Ignored */ }
         }
         return card;
     }
 
     public List<CreditCard> readAll() {
         List<CreditCard> cardList = new ArrayList<>();
-        try {
-            conn = connect.doConnect();
-            String sql = "SELECT * FROM card";
-            pst = conn.prepareStatement(sql);
-            rs = pst.executeQuery();
+        try (Connection conn = connect.doConnect(); PreparedStatement pst = conn.prepareStatement(SQL_SELECT_ALL);
+             ResultSet rs = pst.executeQuery()) {
             while (rs.next()) {
                 CreditCard card = new CreditCard();
                 card.setId(rs.getInt(1));
@@ -84,90 +50,57 @@ public class CreditCardDao {
         } catch (SQLException ex) {
             System.out.println("ERROR: Reading all cards is failed");
             System.out.println(ex.getMessage());
-        } finally {
-            try {
-                rs.close();
-            } catch (Exception e) { /* Ignored */ }
-            try {
-                pst.close();
-                conn.close();
-            } catch (Exception e) { /* Ignored */ }
         }
         return cardList;
     }
 
     public void update(String cardNumber, String income, String operation) {
-        try {
-            conn = connect.doConnect();
-            String sql = "UPDATE card SET balance=balance" + operation + "? WHERE number=?";
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, income);
-            pst.setString(2, cardNumber);
+        String str = String.format(SQL_UPDATE, operation);
+        try (Connection conn = connect.doConnect();
+             PreparedStatement pst = createPstCardUpdate(cardNumber, income, conn, str)) {
             pst.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("ERROR: Updating card is failed");
-        } finally {
-            try {
-                pst.close();
-                conn.close();
-            } catch (Exception e) { /* Ignored */ }
         }
     }
 
     public void delete(CreditCard card) {
-        try {
-            conn = connect.doConnect();
-            String sql = "DELETE FROM card WHERE number=?";
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, card.getNumber());
+        try (Connection conn = connect.doConnect();
+             PreparedStatement pst = createPstCardDelete(card, conn)) {
             pst.executeUpdate();
         } catch (SQLException ex) {
             System.out.println("ERROR: Deleting card is failed");
-        } finally {
-            try {
-                pst.close();
-                conn.close();
-            } catch (Exception e) { /* Ignored */ }
         }
     }
 
-    public void createTable() {
-        try {
-            conn = connect.doConnect();
-            String tableSql = "CREATE TABLE card( " +
-                    "id INTEGER, " +
-                    "number TEXT, " +
-                    "pin TEXT, " +
-                    "balance INTEGER DEFAULT 0)";
-            st = conn.createStatement();
-            st.executeUpdate(tableSql);
-            System.out.println("Table is created");
-        } catch (SQLException ex) {
-            System.out.println("ERROR: Creating table \"card\" is failed");
-        } finally {
-            try {
-                st.close();
-                conn.close();
-            } catch (Exception e) { /* Ignored */ }
-        }
+
+    private PreparedStatement createPstCardDelete(CreditCard card, Connection conn) throws SQLException {
+        PreparedStatement pst = conn.prepareStatement(SQL_DELETE);
+        pst.setString(1, card.getNumber());
+        return pst;
     }
 
-    public void deleteTable() {
-        try {
-            conn = connect.doConnect();
-            String sql = "DROP TABLE IF EXISTS card";
-            st = conn.createStatement();
-            st.executeUpdate(sql);
-            System.out.println("Table is deleted");
-        } catch (SQLException ex) {
-            System.out.println("ERROR: Can't delete table");
-            System.out.println(ex.getMessage());
-        } finally {
-            try {
-                pst.close();
-                conn.close();
-            } catch (Exception e) { /* Ignored */ }
-        }
+    private PreparedStatement createPstCardRead(String cardNumber, String pin, Connection conn) throws SQLException {
+        PreparedStatement pst = conn.prepareStatement(SQL_SELECT_ONE);
+        pst.setString(1, String.valueOf(cardNumber));
+        pst.setString(2, String.valueOf(pin));
+        return pst;
     }
+
+    private PreparedStatement createPstCardCreate(CreditCard card, Connection conn) throws SQLException {
+        PreparedStatement pst = conn.prepareStatement(SQL_INSERT);
+        pst.setInt(1, card.getId());
+        pst.setString(2, card.getNumber());
+        pst.setString(3, card.getPin());
+        return pst;
+    }
+
+    private PreparedStatement createPstCardUpdate(String cardNumber, String income, Connection conn, String str) throws SQLException {
+        PreparedStatement pst = conn.prepareStatement(str);
+        pst.setString(1, income);
+        pst.setString(2, cardNumber);
+        return pst;
+    }
+
 }
 

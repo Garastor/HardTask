@@ -1,15 +1,15 @@
 package banking.entity;
 
 public enum PrintMessage {
-    HELLO("1. Create an account\n" +
+    MAIN_MENU("1. Create an account\n" +
             "2. Log into account\n" +
             "0. Exit"),
-    ENTERCARD("\nEnter your card number:"),
-    ENTERPIN("Enter your PIN:"),
-    ERRORLOGIN("\nWrong card number or PIN!\n"),
+    ENTER_CARD("\nEnter your card number:"),
+    ENTER_PIN("Enter your PIN:"),
+    ERROR_LOGIN("\nWrong card number or PIN!\n"),
     LOGIN("\nYou have successfully logged in!\n"),
     CREATE("\nYour card has been created"),
-    MENU("1. Balance\n" +
+    USER_MENU("1. Balance\n" +
             "2. Add income\n" +
             "3. Do transfer\n" +
             "4. Close account\n" +
@@ -18,16 +18,15 @@ public enum PrintMessage {
     BALANCE("Balance: "),
     LOGOUT("\nYou have successfully logged out!\n"),
     BYE("Bye!\n"),
-    ENTERINCOME("\nEnter income:"),
-    INCOMEADDED("Income was added!\n"),
-    DOTRANSFER("Transfer\n Enter card number:"),
-    TRANSMISTAKE("Probably you made a mistake in the card number. Please try again!\n"),
-    TRANSNOCARD("Such a card does not exist."),
-    TRANSHOWMUCH("Enter how much money you want to transfer:"),
-    TRANSNOENOUGH("Not enough money!\n"),
-    TRANSSUCCESS("Success!\n"),
-    CLOSEACC("The account has been closed!\n");
-
+    ENTER_INCOME("\nEnter income:"),
+    INCOME_ADDED("Income was added!\n"),
+    DO_TRANSFER("Transfer\n Enter card number:"),
+    TRANS_MISTAKE("Probably you made a mistake in the card number. Please try again!\n"),
+    TRANS_NO_CARD("Such a card does not exist."),
+    TRANS_HOW_MUCH("Enter how much money you want to transfer:"),
+    TRANS_NO_ENOUGH("Not enough money!\n"),
+    TRANS_SUCCESS("Success!\n"),
+    CLOSE_ACC("The account has been closed!\n");
 
     String message;
 

@@ -2,16 +2,18 @@ package banking.menu;
 
 import banking.dao.CreditCardDao;
 import banking.entity.CreditCard;
-import banking.entity.Inputs;
+import banking.entity.InputFromKeyboard;
 import banking.entity.PrintMessage;
 import banking.service.CreditCardService;
 
 import java.util.Objects;
 
+import static banking.entity.Constants.*;
+
 public class UserMenu {
 
-    private CreditCardDao creditCardDao;
-    private CreditCardService creditCardService;
+    private final CreditCardDao creditCardDao;
+    private final CreditCardService creditCardService;
     private CreditCard card;
 
     public UserMenu(String cardNumber, String pin) {
@@ -21,22 +23,22 @@ public class UserMenu {
     }
 
     public boolean startMenu() {
-        PrintMessage.MENU.print();
-        String input = Inputs.MENU2.get();
-        if (Objects.equals(input, "1")) {
+        PrintMessage.USER_MENU.print();
+        String input = InputFromKeyboard.USER_MENU.get();
+        if (Objects.equals(input, ONE)) {
             getBalance();
-        } else if (Objects.equals(input, "2")) {
+        } else if (Objects.equals(input, TWO)) {
             addIncome();
-        } else if (Objects.equals(input, "3")) {
+        } else if (Objects.equals(input, THREE)) {
             doTransfer();
-        } else if (Objects.equals(input, "4")) {
+        } else if (Objects.equals(input, FOUR)) {
             deleteCard();
             return false;
-        } else if (Objects.equals(input, "5")) {
+        } else if (Objects.equals(input, FIVE)) {
             PrintMessage.LOGOUT.print();
             return false;
         }
-        return !Objects.equals(input, "0");
+        return !Objects.equals(input, ZERO);
     }
 
     private void getBalance() {
@@ -45,20 +47,20 @@ public class UserMenu {
     }
 
     private void addIncome() {
-        PrintMessage.ENTERINCOME.print();
-        creditCardDao.update(card.getNumber(), Inputs.DIGITS.get(), "+");
-        PrintMessage.INCOMEADDED.print();
+        PrintMessage.ENTER_INCOME.print();
+        creditCardDao.update(card.getNumber(), InputFromKeyboard.DIGITS.get(), "+");
+        PrintMessage.INCOME_ADDED.print();
         card = creditCardDao.read(card.getNumber(), card.getPin());
     }
 
     private void doTransfer() {
-        PrintMessage.DOTRANSFER.print();
-        String cardNumber = Inputs.NUMBER.get();
+        PrintMessage.DO_TRANSFER.print();
+        String cardNumber = InputFromKeyboard.CARD_NUMBER.get();
         if (isCardChecked(cardNumber)) {
-            PrintMessage.TRANSHOWMUCH.print();
-            String money = Inputs.DIGITS.get();
+            PrintMessage.TRANS_HOW_MUCH.print();
+            String money = InputFromKeyboard.DIGITS.get();
             if (card.getBalance() < Integer.parseInt(money)) {
-                PrintMessage.TRANSNOENOUGH.print();
+                PrintMessage.TRANS_NO_ENOUGH.print();
             } else {
                 creditCardDao.update(cardNumber, money, "+");
                 creditCardDao.update(card.getNumber(), (money), "-");
@@ -69,15 +71,15 @@ public class UserMenu {
 
     private void deleteCard() {
         creditCardDao.delete(card);
-        PrintMessage.CLOSEACC.print();
+        PrintMessage.CLOSE_ACC.print();
     }
 
     private boolean isCardChecked(String cardNumber) {
         if (!creditCardService.compareCheckSum(cardNumber)) {
-            PrintMessage.TRANSMISTAKE.print();
+            PrintMessage.TRANS_MISTAKE.print();
             return false;
         } else if (!isFindCard(cardNumber)) {
-            PrintMessage.TRANSNOCARD.print();
+            PrintMessage.TRANS_NO_CARD.print();
             return false;
         }
         return true;
