@@ -1,6 +1,7 @@
 package banking.menu;
 
 import banking.dao.CreditCardDao;
+import banking.entity.Constants;
 import banking.entity.CreditCard;
 import banking.entity.InputFromKeyboard;
 import banking.entity.PrintMessage;
@@ -10,18 +11,18 @@ import java.util.Objects;
 
 public enum UserMenuEnum {
 
-    ONE ("1") {   //Get Balance
+    GET_BALANCE(Constants.ONE) {
         @Override
-        public boolean startMenu(String cardNumber, String pin) {
+        public boolean menuOption(String cardNumber, String pin) {
             CreditCard card = creditCardDao.read(cardNumber, pin);
             PrintMessage.BALANCE.print();
             System.out.println(card.getBalance());
             return true;
         }
     },
-    TWO ("2") {   //Add Income
+    ADD_INCOME(Constants.TWO) {
         @Override
-        public boolean startMenu(String cardNumber, String pin) {
+        public boolean menuOption(String cardNumber, String pin) {
             CreditCard card = creditCardDao.read(cardNumber, pin);
             PrintMessage.ENTER_INCOME.print();
             creditCardDao.update(card.getNumber(), InputFromKeyboard.DIGITS.get(), "+");
@@ -29,9 +30,9 @@ public enum UserMenuEnum {
             return true;
         }
     },
-    THREE ("3") {  //Do Transfer
+    DO_TRANSFER(Constants.THREE) {
         @Override
-        public boolean startMenu(String cardNumber, String pin) {
+        public boolean menuOption(String cardNumber, String pin) {
             CreditCard card = creditCardDao.read(cardNumber, pin);
             PrintMessage.DO_TRANSFER.print();
             String secondCardNumber = InputFromKeyboard.CARD_NUMBER.get();
@@ -43,44 +44,40 @@ public enum UserMenuEnum {
                 } else {
                     creditCardDao.update(secondCardNumber, money, "+");
                     creditCardDao.update(card.getNumber(), (money), "-");
-                    card = creditCardDao.read(card.getNumber(), card.getPin());
                 }
             }
             return true;
         }
     },
-    FOUR ("4") {  //Delete Card and Close Menu
+    DELETE_CARD(Constants.FOUR) {
         @Override
-        public boolean startMenu(String cardNumber, String pin) {
+        public boolean menuOption(String cardNumber, String pin) {
             creditCardDao.delete(creditCardDao.read(cardNumber, pin));
             PrintMessage.CLOSE_ACC.print();
             return false;
         }
     },
-    FIVE ("5") {  //Close Menu
+    CLOSE_MENU(Constants.FIVE) {
         @Override
-        public boolean startMenu(String cardNumber, String pin) {
+        public boolean menuOption(String cardNumber, String pin) {
             return false;
         }
     };
 
-
-    private String input;
+    private final String input;
 
     UserMenuEnum(String input) {
         this.input = input;
     }
 
-    public String getInput () {
+    public String getInput() {
         return input;
     }
 
-    public abstract boolean startMenu(String cardNumber, String pin);
-
+    public abstract boolean menuOption(String cardNumber, String pin);
 
     private static final CreditCardDao creditCardDao = new CreditCardDao();
     private static final CreditCardService creditCardService = new CreditCardService();
-
 
     private static boolean isCardChecked(String cardNumber) {
         if (!creditCardService.compareCheckSum(cardNumber)) {

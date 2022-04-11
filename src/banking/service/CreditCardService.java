@@ -20,8 +20,7 @@ public class CreditCardService {
 
     public boolean compareCheckSum(String number) {
         String checkSum = String.valueOf(number.charAt(number.length() - 1));
-        String checkNumb = Optional.ofNullable(number)
-                .filter(str -> str.length() != 0)
+        String checkNumb = Optional.of(number)
                 .map(str -> str.substring(0, str.length() - 1))
                 .orElse(number);
         return (checkSum.equals(takeCheckSum(checkNumb)));

@@ -12,10 +12,10 @@ public enum InputFromKeyboard {
     CARD_PIN("[0-9]{4}"),
     DIGITS("\\d+");
 
-    private String regEx;
+    private final String regEx;
     private final Scanner scanner = new Scanner(System.in);
 
-    private InputFromKeyboard(String regEx) {
+    InputFromKeyboard(String regEx) {
         this.regEx = regEx;
     }
 
@@ -26,10 +26,6 @@ public enum InputFromKeyboard {
                 return s;
             }
         }
-    }
-
-    private String getRegEx() {
-        return regEx;
     }
 
     private boolean check(String input) {

@@ -30,9 +30,9 @@ public class MainMenu {
             if (userLoggedIn) {
                 PrintMessage.USER_MENU.print();
                 input = InputFromKeyboard.USER_MENU.get();
-                for (UserMenuEnum ums: UserMenuEnum.values()) {
+                for (UserMenuEnum ums : UserMenuEnum.values()) {
                     if (Objects.equals(ums.getInput(), input)) {
-                        userLoggedIn = ums.startMenu(cardNumber, pin);
+                        userLoggedIn = ums.menuOption(cardNumber, pin);
                     }
                 }
             } else {
