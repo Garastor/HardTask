@@ -14,8 +14,10 @@ public class MainMenu {
 
     private final CreditCardService creditCardService;
     private final CreditCardDao creditCardDao;
-    private UserMenu userMenu;
-    boolean userLoggedIn;
+    //private UserMenu userMenu;
+    private boolean userLoggedIn;
+    private String cardNumber;
+    private String pin;
 
     public MainMenu() {
         creditCardService = new CreditCardService();
@@ -23,10 +25,16 @@ public class MainMenu {
     }
 
     public void startMenu() {
-        String input = TWO;
+        String input;
         do {
             if (userLoggedIn) {
-                userLoggedIn = userMenu.startMenu();
+                PrintMessage.USER_MENU.print();
+                input = InputFromKeyboard.USER_MENU.get();
+                for (UserMenuEnum ums: UserMenuEnum.values()) {
+                    if (Objects.equals(ums.getInput(), input)) {
+                        userLoggedIn = ums.startMenu(cardNumber, pin);
+                    }
+                }
             } else {
                 PrintMessage.MAIN_MENU.print();
                 input = InputFromKeyboard.MAIN_MENU.get();
@@ -46,12 +54,11 @@ public class MainMenu {
 
     private void logIn() {
         PrintMessage.ENTER_CARD.print();
-        String cardNumber = InputFromKeyboard.CARD_NUMBER.get();
+        cardNumber = InputFromKeyboard.CARD_NUMBER.get();
         PrintMessage.ENTER_PIN.print();
-        String pin = InputFromKeyboard.CARD_PIN.get();
+        pin = InputFromKeyboard.CARD_PIN.get();
         if (isLogIn(cardNumber, pin)) {
             PrintMessage.LOGIN.print();
-            userMenu = new UserMenu(cardNumber, pin);
             userLoggedIn = true;
         } else {
             PrintMessage.ERROR_LOGIN.print();
