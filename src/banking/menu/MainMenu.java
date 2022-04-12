@@ -14,7 +14,6 @@ public class MainMenu {
 
     private final CreditCardService creditCardService;
     private final CreditCardDao creditCardDao;
-    //private UserMenu userMenu;
     private boolean userLoggedIn;
     private String cardNumber;
     private String pin;
