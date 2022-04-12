@@ -1,22 +1,21 @@
 package banking.entity;
 
-import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum Inputs {
+public enum InputFromKeyboard {
 
-    MENU("[0-2]"),
-    MENU2("[0-5]"),
-    NUMBER("[0-9]{16}"),
-    PIN("[0-9]{4}"),
+    MAIN_MENU("[0-2]"),
+    USER_MENU("[0-5]"),
+    CARD_NUMBER("[0-9]{16}"),
+    CARD_PIN("[0-9]{4}"),
     DIGITS("\\d+");
 
-    private String regEx;
+    private final String regEx;
     private final Scanner scanner = new Scanner(System.in);
 
-    private Inputs(String regEx) {
+    InputFromKeyboard(String regEx) {
         this.regEx = regEx;
     }
 
@@ -27,10 +26,6 @@ public enum Inputs {
                 return s;
             }
         }
-    }
-
-    private String getRegEx() {
-        return regEx;
     }
 
     private boolean check(String input) {
